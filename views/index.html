@@ -1,0 +1,100 @@
+<!--suppress ALL -->
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    table, td, th {
+        border: 1px solid black;
+        height: 50px;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<div class="container">
+    <div class="first-step row">
+        <div class="col-sm-12 form-area">
+            <br>
+            <div style="background:#9e9e9e73; padding: 50px">
+                <h2 style="border-bottom: solid;">Twitter App Credentials</h2>
+                <div class="form-group row">
+                    <h3>
+                        Consumer Key
+                        <input id="consumerKey" type="text" style="width: 250px;"/>
+                    </h3>
+                </div>
+                <div class="form-group row">
+                    <h3>
+                        Consumer Secret Key
+                        <input id="consumerSecret" type="text" style="width: 250px;"/>
+                    </h3>
+                </div>
+                <div class="form-group row">
+                    <h3>
+                        Access Token Key
+                        <input id="access_token" type="text" style="width: 250px;"/>
+                    </h3>
+                </div>
+                <div class="form-group row">
+                    <h3>
+                        Access Token Secret Key
+                        <input id="access_token_secret" type="text" style="width: 250px;"/>
+                    </h3>
+                </div>
+            </div>
+            <div style="padding: 10px;"></div>
+            <div class="form-group row" style="background:#9e9e9e73; padding: 50px">
+                <h3>
+                    Screen Name
+                    <input id="screen_name" type="text" style="width: 250px;"/>
+                </h3>
+                <button style="height: 30px; width: 90px;" id="searchButton">Search</button>
+                <p id="processingMessage"></p>
+            </div>
+        </div>
+        <div style="border: solid; border-width: 1px; padding: 10px;">
+            <h2>Result</h2>
+            <p id="response" ></p>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $("#searchButton").click(function () {
+        const consumerKey = $("#consumerKey").val();
+        const consumerSecret = $("#consumerSecret").val();
+        const access_token = $("#access_token").val();
+        const access_token_secret = $("#access_token_secret").val();
+        const screen_name = $("#screen_name").val();
+
+        if (consumerKey !== '' && consumerSecret !== '' && access_token !== '' && access_token_secret !== '' && screen_name !== '') {
+            $("#processingMessage").text("Processing Request");
+            $("#response").text("");
+            $.get("https://cv-assignment.herokuapp.com/tweets?screen_name=" + screen_name +
+                "&consumer_key=" + consumerKey +
+                "&consumer_secret=" + consumerSecret +
+                "&access_token=" + access_token +
+                "&access_token_secret=" + access_token_secret, function (data, status) {
+                $("#processingMessage").text("");
+                if(status == 'success'){
+                    $("#response").html(
+                    "<center><table><tr><th>Name</th><th>"+ data.name
+                        + "</th></tr> <tr><th>Number of Followers</th><th>" + data.followers_count
+                        + "</th></tr> <tr><th>Most Favourite Tweet In Last 7 Days</th><th>"+ data.most_favourite_tweet_in_last_7_days
+                        + "</th></tr> <tr><th>Most Retweeted Tweet In Last 7 Days</th><th>" + data.most_retweeted_tweet_in_last_7_days
+                        + "</th></tr> <tr><th>Last Tweet</th><th>" + data.last_tweet
+                        + "</th></tr> <tr><th>Last Tweet On</th><th>" + data.last_tweet_on + "</table></center>"
+                );
+                }
+            }).fail(function () {
+                $("#processingMessage").text("");
+                $("#response").html(
+                    "<b>Error While Fetching data</b>"
+                );
+            });
+        } else {
+            alert('Please fill all the information.new ');
+        }
+    });
+
+</script>

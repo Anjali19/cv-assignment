@@ -1,7 +1,6 @@
 const Twit = require('twit');
 
 async function getTweets(req, res, next) {
-
     const T = new Twit({
         consumer_key: req.query.consumer_key || '',
         consumer_secret: req.query.consumer_secret || '',
@@ -9,15 +8,13 @@ async function getTweets(req, res, next) {
         access_token_secret: req.query.access_token_secret || '',
         timeout_ms: 60 * 1000,  // optional HTTP request timeout to apply to all requests.
     });
-
     await T.get('account/verify_credentials', {skip_status: true})
         .catch(function (err) {
-            console.log('caught error', err.stack);
             res.status(400);
             res.send('user not authenticated');
             return res;
         });
-
+    
     let tweets_in_last_7_days = {};
     const tweet_summary = {};
     let max_retweet_count = 0;
@@ -25,11 +22,10 @@ async function getTweets(req, res, next) {
 
     //api to get first n number of tweets by a particular screen_name
     await T.get('statuses/user_timeline', { screen_name : req.query.screen_name, count : 7}, function (err, data, response) {
-        console.log(data);
         if (err) {
             console.log(err);
             res.status(500);
-            res.send(`Internal Error. Error while fetching data for ${req.query.screen_name}`);
+            res.send(`Internal Error while getting tweets info. Error while fetching data for ${req.query.screen_name}`);
             return res;
         } else {
             tweets_in_last_7_days = data;
@@ -49,11 +45,10 @@ async function getTweets(req, res, next) {
 
     //To get data about screen_name
     await T.get('/users/lookup', { screen_name : req.query.screen_name},  function (err, data, response) {
-    	console.log(data);
         if(err) {
         	console.log(err);
             res.status(500);
-            res.send(`Internal Error. Error while fetching data for ${req.query.screen_name}`);
+            res.send(`Internal Error while getting info about user. Error while fetching data for ${req.query.screen_name}`);
             return res;
     } else {
             tweet_summary.name = data[0].name;
@@ -64,5 +59,6 @@ async function getTweets(req, res, next) {
     }
     });
 }
+
 
 module.exports.getTweets = getTweets;

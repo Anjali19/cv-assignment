@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const routes = require('./tweets/routes');
+const routes = require('./routes');
 const errorHandlers = require('./tweets/errorHandlers');
 
 app.set('port', (process.env.PORT || 5000));
